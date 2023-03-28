@@ -12,7 +12,8 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
-    Timer(Duration(seconds: 3), () => Navigator.pushNamed(context, '/login'));
+    Timer(const Duration(seconds: 3),
+        () => Navigator.pushNamed(context, '/login'));
     super.initState();
   }
 
@@ -24,7 +25,8 @@ class _SplashPageState extends State<SplashPage> {
           width: 130,
           height: 150,
           decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage('assets/logo.png'))),
+              image:
+                  DecorationImage(image: AssetImage('assets/logosplash.png'))),
         ),
       ),
     );

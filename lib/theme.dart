@@ -23,6 +23,7 @@ TextStyle primaryTextButtonStyle = GoogleFonts.poppins(color: primaryColor);
 TextStyle secondaryTextStyle = GoogleFonts.poppins(color: secondaryTextColor);
 TextStyle tertiaryTextStyle = GoogleFonts.poppins(color: tertiaryTextColor);
 TextStyle whiteTextStyle = GoogleFonts.poppins(color: backgroundColor);
+TextStyle yellowTextStyle = GoogleFonts.poppins(color: secondaryColor);
 
 FontWeight light = FontWeight.w300;
 FontWeight regular = FontWeight.w400;

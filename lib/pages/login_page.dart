@@ -25,12 +25,12 @@ class LoginPage extends StatelessWidget {
       );
     }
 
-    Widget emailInput() {
+    Widget phoneNumber() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Email',
+            'Nomor Hp',
             style: secondaryTextStyle.copyWith(fontWeight: semiBold),
           ),
           const SizedBox(
@@ -45,6 +45,7 @@ class LoginPage extends StatelessWidget {
             ),
             child: TextFormField(
               style: secondaryTextStyle,
+              keyboardType: TextInputType.phone,
               decoration: InputDecoration.collapsed(
                   hintText: 'ketik email Anda di sini',
                   hintStyle: tertiaryTextStyle),
@@ -89,9 +90,13 @@ class LoginPage extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: defaultMargin),
         child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/home');
+            },
             style: TextButton.styleFrom(
                 backgroundColor: primaryColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             child: Text(
@@ -109,9 +114,12 @@ class LoginPage extends StatelessWidget {
             'Jika lupa akun? ',
             style: secondaryTextStyle.copyWith(fontSize: 12),
           ),
-          Text(
-            'Hubungi kami',
-            style: primaryTextButtonStyle.copyWith(fontSize: 12),
+          GestureDetector(
+            onTap: () {},
+            child: Text(
+              'Hubungi kami',
+              style: primaryTextButtonStyle.copyWith(fontSize: 12),
+            ),
           )
         ],
       );
@@ -130,7 +138,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(
                 height: 84,
               ),
-              emailInput(),
+              phoneNumber(),
               const SizedBox(
                 height: 16,
               ),
