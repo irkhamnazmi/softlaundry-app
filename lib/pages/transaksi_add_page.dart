@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class MemberEditPage extends StatelessWidget {
-  const MemberEditPage({super.key});
+class TransaksiAddPage extends StatefulWidget {
+  const TransaksiAddPage({super.key});
+
+  @override
+  State<TransaksiAddPage> createState() => _TransaksiAddPageState();
+}
+
+class _TransaksiAddPageState extends State<TransaksiAddPage> {
+  bool isStrechedDropDown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +34,11 @@ class MemberEditPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Edit Member',
+                'Tambah Transaksi',
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
-              Image.asset(
-                'assets/trash.png',
-                height: 24,
-              )
+              const SizedBox()
             ],
           ),
         )),
@@ -63,14 +67,14 @@ class MemberEditPage extends StatelessWidget {
       );
     }
 
-    Widget nameInput() {
+    Widget nameMemberInput() {
       return Container(
         margin: EdgeInsets.only(bottom: large),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nama',
+              'Nama member',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
@@ -85,9 +89,9 @@ class MemberEditPage extends StatelessWidget {
               ),
               child: TextFormField(
                 style: secondaryTextStyle,
+                readOnly: true,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry name',
-                    hintStyle: secondaryTextStyle),
+                    hintText: 'SoftLaundry', hintStyle: secondaryTextStyle),
               ),
             )
           ],
@@ -95,14 +99,14 @@ class MemberEditPage extends StatelessWidget {
       );
     }
 
-    Widget addressInput() {
+    Widget layananInput() {
       return Container(
         margin: EdgeInsets.only(bottom: large),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Alamat',
+              'Layanan',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
@@ -115,14 +119,98 @@ class MemberEditPage extends StatelessWidget {
                 border: Border.all(color: tertiaryColor),
                 borderRadius: BorderRadius.circular(10),
               ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Text(
+                        'Cucian Kotor',
+                        style: secondaryTextStyle,
+                      )),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isStrechedDropDown = !isStrechedDropDown;
+                          });
+                        },
+                        child: Image.asset(
+                          isStrechedDropDown
+                              ? 'assets/up.png'
+                              : 'assets/down.png',
+                          height: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  isStrechedDropDown
+                      ? Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                  '- Cucian Kotor',
+                                  style: secondaryTextStyle,
+                                )),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                  '- Cucian Kotor',
+                                  style: secondaryTextStyle,
+                                )),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: Text(
+                                  '- Cucian Kotor',
+                                  style: secondaryTextStyle,
+                                )),
+                              ],
+                            ),
+                          ],
+                        )
+                      : const SizedBox()
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget jumlahInput() {
+      return Container(
+        margin: EdgeInsets.only(bottom: large),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Jumlah',
+              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Container(
+              width: 150,
+              padding: EdgeInsets.symmetric(horizontal: large, vertical: 11),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: Border.all(color: tertiaryColor),
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: TextFormField(
-                minLines: 4,
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
                 style: secondaryTextStyle,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry alamat',
-                    hintStyle: secondaryTextStyle),
+                    hintText: 'ketik harga di sini',
+                    hintStyle: tertiaryTextStyle),
               ),
             )
           ],
@@ -130,14 +218,15 @@ class MemberEditPage extends StatelessWidget {
       );
     }
 
-    Widget phoneNumberInput() {
+    Widget totalHargaInput() {
       return Container(
+        width: 150,
         margin: EdgeInsets.only(bottom: large),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nomor Hp',
+              'Total Harga',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
@@ -151,10 +240,10 @@ class MemberEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
-                keyboardType: TextInputType.phone,
                 style: secondaryTextStyle,
+                readOnly: true,
                 decoration: InputDecoration.collapsed(
-                    hintText: '085773882', hintStyle: secondaryTextStyle),
+                    hintText: 'Rp 0,-', hintStyle: tertiaryTextStyle),
               ),
             )
           ],
@@ -169,20 +258,23 @@ class MemberEditPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             idMember(),
-            nameInput(),
-            addressInput(),
-            phoneNumberInput(),
+            nameMemberInput(),
+            layananInput(),
+            jumlahInput(),
+            totalHargaInput(),
           ],
         ),
       );
     }
 
-    Widget buttonEdit() {
+    Widget buttonSave() {
       return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: defaultMargin),
-        child: TextButton(
-            onPressed: () {},
+        margin: EdgeInsets.only(top: topMargin),
+        child: ElevatedButton(
+            onPressed: () {
+              Navigator.popAndPushNamed(context, '/transaksi-success');
+            },
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,
@@ -191,7 +283,7 @@ class MemberEditPage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             child: Text(
-              'Cetak Kode',
+              'Simpan Data',
               style: whiteTextStyle.copyWith(fontWeight: semiBold),
             )),
       );
@@ -202,7 +294,7 @@ class MemberEditPage extends StatelessWidget {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        child: Column(children: [header(), content(), buttonEdit()]),
+        child: Column(children: [header(), content(), buttonSave()]),
       ),
     );
   }

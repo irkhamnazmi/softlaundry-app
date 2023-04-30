@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class MemberEditPage extends StatelessWidget {
-  const MemberEditPage({super.key});
+class ProfilEditPage extends StatelessWidget {
+  const ProfilEditPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class MemberEditPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Edit Member',
+                'Edit Profil',
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
@@ -41,7 +41,7 @@ class MemberEditPage extends StatelessWidget {
       );
     }
 
-    Widget idMember() {
+    Widget idKasir() {
       return Container(
         margin: EdgeInsets.only(bottom: large),
         child: Column(
@@ -162,16 +162,46 @@ class MemberEditPage extends StatelessWidget {
       );
     }
 
+    Widget passwordInput() {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Password',
+            style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: Border.all(color: tertiaryColor),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextFormField(
+              style: secondaryTextStyle,
+              obscureText: true,
+              decoration: InputDecoration.collapsed(
+                  hintText: '*****', hintStyle: secondaryTextStyle),
+            ),
+          )
+        ],
+      );
+    }
+
     Widget content() {
       return Container(
         margin: EdgeInsets.only(top: topMargin),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            idMember(),
+            idKasir(),
             nameInput(),
             addressInput(),
             phoneNumberInput(),
+            passwordInput()
           ],
         ),
       );
@@ -180,7 +210,7 @@ class MemberEditPage extends StatelessWidget {
     Widget buttonEdit() {
       return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: defaultMargin),
+        margin: EdgeInsets.only(top: topMargin),
         child: TextButton(
             onPressed: () {},
             style: ElevatedButton.styleFrom(
@@ -191,7 +221,7 @@ class MemberEditPage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             child: Text(
-              'Cetak Kode',
+              'Ubah Data',
               style: whiteTextStyle.copyWith(fontWeight: semiBold),
             )),
       );

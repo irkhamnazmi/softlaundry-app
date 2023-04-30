@@ -89,11 +89,12 @@ class LoginPage extends StatelessWidget {
       return Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: defaultMargin),
-        child: TextButton(
+        child: ElevatedButton(
             onPressed: () {
               Navigator.pushNamed(context, '/home');
             },
-            style: TextButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+                elevation: 0,
                 backgroundColor: primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -130,7 +131,8 @@ class LoginPage extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: SafeArea(
         child: Container(
-          margin: EdgeInsets.all(defaultMargin),
+          margin: EdgeInsets.symmetric(
+              horizontal: defaultMargin, vertical: topMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

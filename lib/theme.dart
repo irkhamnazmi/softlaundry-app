@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-double defaultMargin = 30.0;
+double defaultMargin = 16.0;
+double topMargin = 30.0;
 double extraSmall = 10.0;
 double small = 12.0;
 double large = 16.0;

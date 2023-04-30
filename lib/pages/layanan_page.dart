@@ -14,7 +14,7 @@ class LayananPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
             child: Container(
-          padding: EdgeInsets.only(top: defaultMargin),
+          padding: EdgeInsets.only(top: topMargin),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -105,7 +105,7 @@ class LayananPage extends StatelessWidget {
         child: Column(children: [
           header(),
           SizedBox(
-            height: defaultMargin,
+            height: topMargin,
           ),
           search(),
           SizedBox(

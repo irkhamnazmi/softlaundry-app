@@ -11,9 +11,13 @@ import 'package:softlaundryapp/pages/login_page.dart';
 import 'package:softlaundryapp/pages/member_add_page.dart';
 import 'package:softlaundryapp/pages/member_edit_page.dart';
 import 'package:softlaundryapp/pages/member_page.dart';
+import 'package:softlaundryapp/pages/profile_edit_page.dart';
 import 'package:softlaundryapp/pages/splash_page.dart';
+import 'package:softlaundryapp/pages/tentang_kami_page.dart';
+import 'package:softlaundryapp/pages/transaksi_add_page.dart';
 import 'package:softlaundryapp/pages/transaksi_detail_page.dart';
 import 'package:softlaundryapp/pages/transaksi_page.dart';
+import 'package:softlaundryapp/pages/transaksi_success_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,7 +46,11 @@ class MyApp extends StatelessWidget {
         '/layanan-edit': (context) => const LayananEditPage(),
         '/transaksi': (context) => const TransaksiPage(),
         '/transaksi-detail': (context) => const TransaksiDetailPage(),
+        '/transaksi-add': (context) => const TransaksiAddPage(),
+        '/transaksi-success': (context) => const TransaksiSuccessPage(),
         '/scan': (context) => const ScanPage(),
+        '/profil-edit': (context) => const ProfilEditPage(),
+        '/tentang-kami': (context) => const TentangKamiPage(),
       },
     );
   }

@@ -13,19 +13,17 @@ class LayananEditPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
             child: Container(
-          padding: EdgeInsets.only(top: defaultMargin),
+          padding: EdgeInsets.only(top: topMargin),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ClipOval(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Image.asset(
-                    'assets/left.png',
-                    height: 24,
-                  ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Image.asset(
+                  'assets/left.png',
+                  height: 24,
                 ),
               ),
               Text(
@@ -131,14 +129,17 @@ class LayananEditPage extends StatelessWidget {
 
     Widget content() {
       return Container(
-        margin: EdgeInsets.only(top: defaultMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            idLayanan(),
-            nameInput(),
-            hargaInput(),
-          ],
+        margin: EdgeInsets.only(top: topMargin),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              idLayanan(),
+              nameInput(),
+              hargaInput(),
+            ],
+          ),
         ),
       );
     }
@@ -146,10 +147,11 @@ class LayananEditPage extends StatelessWidget {
     Widget buttonEdit() {
       return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: defaultMargin),
-        child: TextButton(
+        margin: EdgeInsets.only(top: topMargin),
+        child: ElevatedButton(
             onPressed: () {},
-            style: TextButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+                elevation: 0,
                 backgroundColor: primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

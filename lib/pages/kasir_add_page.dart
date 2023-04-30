@@ -13,7 +13,7 @@ class KasirAddPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
             child: Container(
-          padding: EdgeInsets.only(top: defaultMargin),
+          padding: EdgeInsets.only(top: topMargin),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -193,7 +193,7 @@ class KasirAddPage extends StatelessWidget {
 
     Widget content() {
       return Container(
-        margin: EdgeInsets.only(top: defaultMargin),
+        margin: EdgeInsets.only(top: topMargin),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -210,10 +210,11 @@ class KasirAddPage extends StatelessWidget {
     Widget buttonAdd() {
       return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: defaultMargin),
-        child: TextButton(
+        margin: EdgeInsets.only(top: topMargin),
+        child: ElevatedButton(
             onPressed: () {},
-            style: TextButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+                elevation: 0,
                 backgroundColor: primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

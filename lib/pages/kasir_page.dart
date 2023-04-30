@@ -14,19 +14,17 @@ class KasirPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
             child: Container(
-          padding: EdgeInsets.only(top: defaultMargin),
+          padding: EdgeInsets.only(top: topMargin),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ClipOval(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Image.asset(
-                    'assets/left.png',
-                    height: 24,
-                  ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Image.asset(
+                  'assets/left.png',
+                  height: 24,
                 ),
               ),
               Text(
@@ -105,7 +103,7 @@ class KasirPage extends StatelessWidget {
         child: Column(children: [
           header(),
           SizedBox(
-            height: defaultMargin,
+            height: topMargin,
           ),
           search(),
           SizedBox(

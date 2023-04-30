@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:softlaundryapp/theme.dart';
@@ -80,7 +79,7 @@ class _ScanPageState extends State<ScanPage> {
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              margin: EdgeInsets.only(top: defaultMargin),
+              margin: EdgeInsets.only(top: topMargin),
               child: Column(
                 children: [
                   header(),
@@ -98,6 +97,7 @@ class _ScanPageState extends State<ScanPage> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        Navigator.popAndPushNamed(context, '/transaksi-add');
       });
     });
   }

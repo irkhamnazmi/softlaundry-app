@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class TransaksiDetailPage extends StatelessWidget {
-  const TransaksiDetailPage({super.key});
+class TransaksiSuccessPage extends StatelessWidget {
+  const TransaksiSuccessPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,27 +14,46 @@ class TransaksiDetailPage extends StatelessWidget {
         flexibleSpace: SafeArea(
             child: Container(
           padding: EdgeInsets.only(top: topMargin),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Image.asset(
-                  'assets/left.png',
-                  height: 24,
-                ),
+              Image.asset(
+                'assets/centang.png',
+                height: 70,
+              ),
+              SizedBox(
+                height: large,
               ),
               Text(
-                'Detail Transaksi',
+                'Berhasil',
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
-              const SizedBox()
             ],
           ),
         )),
+      );
+    }
+
+    Widget buttonBack() {
+      return Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(top: topMargin),
+        child: ElevatedButton(
+            onPressed: () {
+              Navigator.popAndPushNamed(context, '/transaksi');
+            },
+            style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: primaryColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10))),
+            child: Text(
+              'Lihat Daftar Transaksi',
+              style: whiteTextStyle.copyWith(fontWeight: semiBold),
+            )),
       );
     }
 
@@ -123,14 +142,13 @@ class TransaksiDetailPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          header(),
-          content(),
-        ]),
-      ),
+      body: ListView(
+          padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+          children: [
+            header(),
+            content(),
+            buttonBack(),
+          ]),
     );
   }
 }

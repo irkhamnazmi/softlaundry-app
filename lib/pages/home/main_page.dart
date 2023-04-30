@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> {
       ));
     }
 
-    Widget body() {
+    Widget? body() {
       switch (currentIndex) {
         case 0:
           return const HomePage();
@@ -67,14 +67,14 @@ class _MainPageState extends State<MainPage> {
         case 2:
           return const ProfilPage();
         default:
-          return const HomePage();
+          const HomePage();
       }
+      return null;
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor,
-      bottomNavigationBar: bottomNav(),
-      body: body(),
-    );
+        backgroundColor: backgroundColor,
+        bottomNavigationBar: bottomNav(),
+        body: body());
   }
 }

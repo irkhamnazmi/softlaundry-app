@@ -61,13 +61,21 @@ class ProfilPage extends StatelessWidget {
     Widget content() {
       return Expanded(
           child: Container(
-        margin: EdgeInsets.only(top: defaultMargin),
+        margin: EdgeInsets.only(top: topMargin),
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: large),
         child: Column(
           children: [
-            menuItem('Edit Profil', 'assets/right.png'),
-            menuItem('Tentang Kami', 'assets/right.png'),
+            GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/profil-edit');
+                },
+                child: menuItem('Edit Profil', 'assets/right.png')),
+            GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/tentang-kami');
+                },
+                child: menuItem('Tentang Kami', 'assets/right.png')),
             menuItem('Keluar', 'assets/keluar.png')
           ],
         ),
@@ -75,8 +83,8 @@ class ProfilPage extends StatelessWidget {
     }
 
     return ListView(
-      padding: EdgeInsets.symmetric(
-          horizontal: defaultMargin, vertical: defaultMargin),
+      padding:
+          EdgeInsets.symmetric(horizontal: defaultMargin, vertical: topMargin),
       children: [header(), content()],
     );
   }
