@@ -1,11 +1,95 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:softlaundryapp/models/kasir_model.dart';
 import 'package:softlaundryapp/theme.dart';
+import 'package:softlaundryapp/widgets/snackbar_alert.dart';
 
-class KasirEditPage extends StatelessWidget {
-  const KasirEditPage({super.key});
+import '../providers/kasir_provider.dart';
+
+class KasirEditPage extends StatefulWidget {
+  final KasirModel kasir;
+
+  const KasirEditPage(this.kasir, {super.key});
+
+  @override
+  State<KasirEditPage> createState() => _KasirEditPageState();
+}
+
+class _KasirEditPageState extends State<KasirEditPage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+
+  bool? isLoading;
+  KasirProvider? kasirProvider;
+  SnackBarAlert? snackBarAlert;
+
+  @override
+  void initState() {
+    getInit();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    emailController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
+  getInit() async {
+    nameController.text = widget.kasir.name.toString();
+    addressController.text = widget.kasir.address.toString();
+    emailController.text = widget.kasir.email.toString();
+    phoneNumberController.text = widget.kasir.phoneNumber.toString();
+    kasirProvider = Provider.of<KasirProvider>(context, listen: false);
+    snackBarAlert = SnackBarAlert();
+  }
 
   @override
   Widget build(BuildContext context) {
+    handleSubmit() async {
+      var name = nameController.text;
+      var address = addressController.text;
+      var email = emailController.text;
+      var phoneNumber = phoneNumberController.text;
+
+      if (await kasirProvider!.edit(
+        id: widget.kasir.id,
+        name: name,
+        address: address,
+        email: email,
+        phoneNumber: phoneNumber,
+        roles: widget.kasir.roles,
+        password: widget.kasir.password,
+      )) {
+        setState(() {
+          snackBarAlert!
+              .alertMessage(context, 'Sukses data kasir diedit', primaryColor);
+        });
+      } else {
+        setState(() {
+          snackBarAlert!
+              .alertMessage(context, 'Gagal data kasir diedit', dangerColor);
+        });
+      }
+    }
+
+    handleDelete() async {
+      if (await kasirProvider!.delete(widget.kasir.id)) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/kasir');
+      } else {
+        setState(() {
+          snackBarAlert!
+              .alertMessage(context, 'Sukses data kasir dihapus', primaryColor);
+        });
+      }
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -18,9 +102,10 @@ class KasirEditPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ClipOval(
-                child: GestureDetector(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.popAndPushNamed(context, '/kasir');
                   },
                   child: Image.asset(
                     'assets/left.png',
@@ -33,35 +118,17 @@ class KasirEditPage extends StatelessWidget {
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
-              Image.asset(
-                'assets/trash.png',
-                height: 24,
+              InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: handleDelete,
+                child: Image.asset(
+                  'assets/trash.png',
+                  height: 24,
+                ),
               )
             ],
           ),
         )),
-      );
-    }
-
-    Widget idMember() {
-      return Container(
-        margin: EdgeInsets.only(bottom: large),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'ID',
-              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              '1',
-              style: primaryTextButtonStyle.copyWith(fontWeight: semiBold),
-            ),
-          ],
-        ),
       );
     }
 
@@ -86,9 +153,10 @@ class KasirEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: nameController,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry name',
+                    hintText: 'isikan nama di sini',
                     hintStyle: secondaryTextStyle),
               ),
             )
@@ -118,12 +186,13 @@ class KasirEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: addressController,
                 minLines: 4,
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry alamat',
+                    hintText: 'Isikan alamat di sini',
                     hintStyle: secondaryTextStyle),
               ),
             )
@@ -153,10 +222,12 @@ class KasirEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: phoneNumberController,
                 keyboardType: TextInputType.phone,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: '085773882', hintStyle: secondaryTextStyle),
+                    hintText: 'Isikan nomor hp di sini',
+                    hintStyle: secondaryTextStyle),
               ),
             )
           ],
@@ -183,9 +254,10 @@ class KasirEditPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextFormField(
+              controller: emailController,
               style: secondaryTextStyle,
               decoration: InputDecoration.collapsed(
-                  hintText: 'softlaundry@email.com',
+                  hintText: 'Isikan email di sini',
                   hintStyle: secondaryTextStyle),
             ),
           )
@@ -199,7 +271,6 @@ class KasirEditPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            idMember(),
             nameInput(),
             addressInput(),
             phoneNumberInput(),
@@ -214,7 +285,7 @@ class KasirEditPage extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: topMargin),
         child: ElevatedButton(
-            onPressed: () {},
+            onPressed: handleSubmit,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,

@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:softlaundryapp/providers/member_providers.dart';
 
 import 'package:softlaundryapp/theme.dart';
+
+import '../widgets/snackbar_alert.dart';
 
 class MemberAddPage extends StatefulWidget {
   const MemberAddPage({super.key});
@@ -18,10 +22,96 @@ class MemberAddPage extends StatefulWidget {
 
 class _MemberAddPageState extends State<MemberAddPage> {
   ScreenshotController screenshotController = ScreenshotController();
+  MemberProvider? memberProvider;
+  SnackBarAlert? snackBarAlert;
 
   var code = customAlphabet('1234567890', 10);
+
+  @override
+  void initState() {
+    memberProvider = Provider.of<MemberProvider>(context, listen: false);
+    snackBarAlert = SnackBarAlert();
+    super.initState();
+  }
+
+  _saveMemberId() async {
+    if (await memberProvider!
+        .add(memberId: code, name: '-', address: '-', phoneNumber: '-')) {
+      _takeScreenShot();
+      if (!mounted) return;
+      Navigator.pop(context);
+      setState(() {
+        snackBarAlert!
+            .alertMessage(context, 'Sukses id member disimpan', primaryColor);
+      });
+    } else {
+      setState(() {
+        Navigator.pop(context);
+        snackBarAlert!
+            .alertMessage(context, 'Gagal id member disimpan', dangerColor);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    handleSubmit() async {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) => SizedBox(
+                width: MediaQuery.of(context).size.width - (2 * defaultMargin),
+                child: AlertDialog(
+                  backgroundColor: backgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Apakah member id ini akan dicetak dan disimpan ke database?',
+                          style: primaryTextStyle.copyWith(
+                              fontSize: large, fontWeight: semiBold),
+                        ),
+                        SizedBox(
+                          height: large,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(top: defaultMargin),
+                          child: ElevatedButton(
+                            onPressed: _saveMemberId,
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: primaryColor,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                            child: Text(
+                              'Ya, Lanjutkan',
+                              style: whiteTextStyle.copyWith(
+                                  fontSize: small, fontWeight: semiBold),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'Nanti',
+                            style: primaryTextStyle.copyWith(
+                                fontSize: small, fontWeight: medium),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ));
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -62,13 +152,13 @@ class _MemberAddPageState extends State<MemberAddPage> {
           padding: EdgeInsets.only(top: defaultMargin),
           child: Column(
             children: [
-              QrImage(
-                data: 'softlaundry-$code',
+              QrImageView(
+                data: code,
                 size: 180,
                 // You can include embeddedImageStyle Property if you
                 //wanna embed an image from your Asset folder
-                embeddedImageStyle: QrEmbeddedImageStyle(
-                  size: const Size(
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size(
                     100,
                     100,
                   ),
@@ -101,9 +191,7 @@ class _MemberAddPageState extends State<MemberAddPage> {
         width: double.infinity,
         margin: EdgeInsets.only(top: defaultMargin),
         child: ElevatedButton(
-            onPressed: () {
-              _takeScreenShot();
-            },
+            onPressed: handleSubmit,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,

@@ -2,47 +2,54 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:softlaundryapp/models/cashier_model.dart';
+import 'package:softlaundryapp/models/kasir_model.dart';
+import 'package:softlaundryapp/shared_prefs.dart';
+
+import '../theme.dart';
 
 class AuthService {
-  String baseUrl = 'https://api.rankep.com/softlaundry-web/public/api';
+  // String baseUrl = 'https://api.rankep.com/softlaundry-web/public/api';
 
-  Future<CashierModel> login({
+  Future<KasirModel> login({
     String? phoneNumber,
     String? password,
   }) async {
     var url = '$baseUrl/login';
     var headers = {'Content-Type': 'application/json'};
     var body = jsonEncode({
-      'phoneNumber': phoneNumber,
+      'phone_number': phoneNumber,
       'password': password,
     });
 
     var response = await http.post(
-      Uri.https(url),
+      Uri.parse(url),
       headers: headers,
       body: body,
     );
 
+    print(response.body);
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      CashierModel user = CashierModel.fromJson(data['user']);
-      user.token = 'Bearer ' + data['access_token'];
+      KasirModel kasir = KasirModel.fromJson(data['cashier']);
+      kasir.token = 'Bearer ' + data['access_token'];
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool("isLoggedIn", true);
       prefs.setString('token', 'Bearer ' + data['access_token']);
 
-      return user;
+      return kasir;
     } else {
       throw Exception('Gagal Login');
     }
   }
 
-  Future<CashierModel> getCashier({required String token}) async {
-    var url = '$baseUrl/user';
+  Future<KasirModel> profile() async {
+    var url = '$baseUrl/profile';
 
-    var headers = {'Content-Type': 'application/json', 'Authorization': token};
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': sharedPrefs.token
+    };
 
     var response = await http.get(Uri.parse(url), headers: headers);
 
@@ -50,10 +57,11 @@ class AuthService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      CashierModel user = CashierModel.fromJson(data);
-      return user;
+      KasirModel kasir = KasirModel.fromJson(data['cashier']);
+      print(response.body);
+      return kasir;
     } else {
-      throw Exception('Gagal Get User');
+      throw Exception('Gagal login');
     }
   }
 }

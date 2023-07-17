@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:softlaundryapp/mobile_design_widget.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+import '../../models/member_model.dart';
+import '../../models/transaksi_model.dart';
 
+class HomePage extends StatefulWidget {
+  final List<MemberModel> member;
+  final List<TransaksiModel> transaksi;
+  const HomePage(this.member, this.transaksi, {super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     Widget header() {
@@ -88,7 +99,9 @@ class HomePage extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      '0',
+                      widget.transaksi.isNotEmpty
+                          ? widget.transaksi.length.toString()
+                          : '0',
                       style: primaryTextStyle.copyWith(
                           fontSize: extralarge, fontWeight: semiBold),
                     ),
@@ -117,7 +130,9 @@ class HomePage extends StatelessWidget {
                       height: 8,
                     ),
                     Text(
-                      '0',
+                      widget.member.isNotEmpty
+                          ? widget.member.length.toString()
+                          : '0',
                       style: primaryTextStyle.copyWith(
                           fontSize: extralarge, fontWeight: semiBold),
                     ),
@@ -285,8 +300,8 @@ class HomePage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      body: SingleChildScrollView(
+    return MobileDesignWidget(
+      child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
           children: [
@@ -307,7 +322,10 @@ class HomePage extends StatelessWidget {
                 )
               ],
             ),
-            mainMenu()
+            const SizedBox(
+              height: 30,
+            ),
+            mainMenu(),
           ],
         ),
       ),

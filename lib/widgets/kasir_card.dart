@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:softlaundryapp/models/kasir_model.dart';
+import 'package:softlaundryapp/pages/kasir_edit_page.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class KasirCard extends StatelessWidget {
-  const KasirCard({super.key});
+class KasirCard extends StatefulWidget {
+  final KasirModel kasir;
+  const KasirCard(this.kasir, {super.key});
+
+  @override
+  State<KasirCard> createState() => _KasirCardState();
+}
+
+class _KasirCardState extends State<KasirCard> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/kasir-edit');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    KasirEditPage(widget.kasir)));
       },
       child: Container(
         padding: EdgeInsets.only(top: large, bottom: large),
@@ -16,26 +33,28 @@ class KasirCard extends StatelessWidget {
             border: Border(bottom: BorderSide(color: tertiaryColor))),
         child: Row(
           children: [
-            Image.asset(
-              'assets/user.png',
+            Image.network(
+              widget.kasir.profilePhotoUrl ?? '',
               height: 50,
             ),
             SizedBox(
               width: large,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'SoftLaundry',
-                  style: secondaryTextStyle,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  '01/01/2023',
-                  style: secondaryTextStyle.copyWith(fontSize: small),
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.kasir.name ?? '',
+                    style: secondaryTextStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '${widget.kasir.createdAt!} WIB',
+                    style: secondaryTextStyle.copyWith(fontSize: small),
+                  ),
+                ],
+              ),
             )
           ],
         ),

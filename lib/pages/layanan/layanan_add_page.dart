@@ -1,11 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:softlaundryapp/providers/layanan_provider.dart';
 import 'package:softlaundryapp/theme.dart';
+import 'package:softlaundryapp/widgets/snackbar_alert.dart';
 
-class LayananAddPage extends StatelessWidget {
+class LayananAddPage extends StatefulWidget {
   const LayananAddPage({super.key});
 
   @override
+  State<LayananAddPage> createState() => _LayananAddPageState();
+}
+
+class _LayananAddPageState extends State<LayananAddPage> {
+  TextEditingController nameController = TextEditingController(text: '');
+  TextEditingController priceController = TextEditingController(text: '');
+
+  LayananProvider? layananProvider;
+  SnackBarAlert? snackBarAlert;
+
+  @override
+  void initState() {
+    getInit();
+    super.initState();
+  }
+
+  getInit() async {
+    layananProvider = Provider.of<LayananProvider>(context, listen: false);
+    snackBarAlert = SnackBarAlert();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    handleSubmit() async {
+      var name = nameController.text;
+
+      var price = priceController.text != ''
+          ? double.parse(priceController.text)
+          : double.parse('0');
+
+      if (await layananProvider!.add(name: name, price: price)) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/layanan');
+        setState(() {
+          snackBarAlert!.alertMessage(
+              context, 'Sukses data layanan disimpan', primaryColor);
+        });
+      } else {
+        setState(() {
+          snackBarAlert!.alertMessage(
+              context, 'Gagal data layanan disimpan', dangerColor);
+        });
+      }
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -19,7 +66,7 @@ class LayananAddPage extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, '/layanan');
                 },
                 child: Image.asset(
                   'assets/left.png',
@@ -35,28 +82,6 @@ class LayananAddPage extends StatelessWidget {
             ],
           ),
         )),
-      );
-    }
-
-    Widget idLayanan() {
-      return Container(
-        margin: EdgeInsets.only(bottom: large),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'ID',
-              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              '1',
-              style: primaryTextButtonStyle.copyWith(fontWeight: semiBold),
-            ),
-          ],
-        ),
       );
     }
 
@@ -81,6 +106,7 @@ class LayananAddPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: nameController,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
                     hintText: 'Ketik nama di sini',
@@ -113,6 +139,7 @@ class LayananAddPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: priceController,
                 style: secondaryTextStyle,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration.collapsed(
@@ -131,7 +158,6 @@ class LayananAddPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            idLayanan(),
             nameInput(),
             hargaInput(),
           ],
@@ -144,7 +170,7 @@ class LayananAddPage extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: topMargin),
         child: ElevatedButton(
-            onPressed: () {},
+            onPressed: handleSubmit,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,

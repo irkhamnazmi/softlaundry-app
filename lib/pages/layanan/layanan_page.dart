@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:softlaundryapp/models/member_model.dart';
-import 'package:softlaundryapp/providers/member_providers.dart';
+import 'package:softlaundryapp/providers/layanan_provider.dart';
 import 'package:softlaundryapp/theme.dart';
-import 'package:softlaundryapp/widgets/member_card.dart';
+import 'package:softlaundryapp/widgets/layanan_card.dart';
 
-class MemberPage extends StatefulWidget {
-  const MemberPage({super.key});
+import '../../models/layanan_model.dart';
+
+class LayananPage extends StatefulWidget {
+  const LayananPage({super.key});
 
   @override
-  State<MemberPage> createState() => _MemberPageState();
+  State<LayananPage> createState() => _LayananPageState();
 }
 
-class _MemberPageState extends State<MemberPage> {
-  // Obtain shared preferences.
-  MemberProvider? memberProvider;
-  List<MemberModel> member = [];
+class _LayananPageState extends State<LayananPage> {
+  LayananProvider? layananProvider;
+  List<LayananModel> layanan = [];
   String? _value;
   bool? isLoading;
 
@@ -26,7 +26,7 @@ class _MemberPageState extends State<MemberPage> {
   }
 
   getInit() async {
-    await memberProvider!.all();
+    await layananProvider!.all();
     setState(() {
       isLoading = false;
     });
@@ -39,12 +39,11 @@ class _MemberPageState extends State<MemberPage> {
 
   @override
   Widget build(BuildContext context) {
-    memberProvider = Provider.of<MemberProvider>(context);
+    layananProvider = Provider.of<LayananProvider>(context);
     if (isLoading == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) => getInit());
     }
-    member = memberProvider!.members;
-
+    layanan = layananProvider!.layanans;
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -66,16 +65,16 @@ class _MemberPageState extends State<MemberPage> {
                 ),
               ),
               Text(
-                'Member',
+                'Layanan',
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/member-add');
+                  Navigator.pushNamed(context, '/layanan-add');
                 },
                 child: Image.asset(
-                  'assets/add_user.png',
+                  'assets/add.png',
                   height: 24,
                 ),
               )
@@ -104,14 +103,14 @@ class _MemberPageState extends State<MemberPage> {
               },
               style: secondaryTextStyle,
               decoration: InputDecoration.collapsed(
-                  hintText: 'Cari Member', hintStyle: tertiaryTextStyle),
+                  hintText: 'Cari Layanan', hintStyle: tertiaryTextStyle),
             ),
           ),
           SizedBox(
             height: large,
           ),
           Text(
-            'Total Member : ${member.isNotEmpty ? member.length : 0}',
+            'Total Layanan : ${layanan.isNotEmpty ? layanan.length : 0}',
             style: secondaryTextStyle.copyWith(
                 fontSize: extraSmall, fontWeight: semiBold),
           ),
@@ -125,22 +124,21 @@ class _MemberPageState extends State<MemberPage> {
         child: Column(
           children: [
             const SizedBox(),
-            member.isNotEmpty
+            layanan.isNotEmpty
                 ? Column(
-                    children: member
+                    children: layanan
                         .where((x) =>
                             x.name!
                                 .toLowerCase()
                                 .contains(_value ?? ''.toLowerCase()) ||
-                            x.address!
-                                .toLowerCase()
-                                .contains(_value ?? ''.toLowerCase()) ||
-                            x.phoneNumber!
+                            x.price!
+                                .toString()
                                 .toLowerCase()
                                 .contains(_value ?? ''.toLowerCase()))
                         .map(
-                          (member) => MemberCard(
-                            member,
+                          (layanan) => LayananCard(
+                            false,
+                            layanan,
                           ),
                         )
                         .toList(),
@@ -148,7 +146,7 @@ class _MemberPageState extends State<MemberPage> {
                 : Text(
                     'Tidak ada data',
                     style: tertiaryTextStyle.copyWith(fontWeight: medium),
-                  ),
+                  )
           ],
         ),
       );

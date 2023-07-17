@@ -44,72 +44,69 @@ class TentangKamiPage extends StatelessWidget {
     Widget content() {
       return Container(
         margin: EdgeInsets.only(top: topMargin),
-        child: Expanded(
-          child: Column(
-            children: [
-              Image.asset(
-                'assets/logosplash.png',
-                width: 130,
+        child: Column(
+          children: [
+            Image.asset(
+              'assets/logosplash.png',
+              width: 130,
+            ),
+            SizedBox(
+              height: large,
+            ),
+            SizedBox(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Website',
+                    style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      _launchUrl();
+                    },
+                    child: Text(
+                      'www.softlaundry.co.id',
+                      style: primaryTextButtonStyle,
+                    ),
+                  ),
+                  SizedBox(
+                    height: small,
+                  ),
+                  Text(
+                    'App Version',
+                    style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+                  ),
+                  Text(
+                    'v1.0.0',
+                    style: primaryTextStyle,
+                  ),
+                  SizedBox(
+                    height: small,
+                  ),
+                  Text(
+                    'Owner',
+                    style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+                  ),
+                  Text(
+                    'Siti Sofi',
+                    style: primaryTextStyle,
+                  ),
+                  SizedBox(
+                    height: small,
+                  ),
+                  Text(
+                    'Design App by',
+                    style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+                  ),
+                  Text(
+                    'Johan',
+                    style: primaryTextStyle,
+                  ),
+                ],
               ),
-              SizedBox(
-                height: large,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Website',
-                      style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        _launchUrl();
-                      },
-                      child: Text(
-                        'www.softlaundry.co.id',
-                        style: primaryTextButtonStyle,
-                      ),
-                    ),
-                    SizedBox(
-                      height: small,
-                    ),
-                    Text(
-                      'App Version',
-                      style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-                    ),
-                    Text(
-                      'v1.0.0',
-                      style: primaryTextStyle,
-                    ),
-                    SizedBox(
-                      height: small,
-                    ),
-                    Text(
-                      'Owner',
-                      style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-                    ),
-                    Text(
-                      'Siti Sofi',
-                      style: primaryTextStyle,
-                    ),
-                    SizedBox(
-                      height: small,
-                    ),
-                    Text(
-                      'Design App by',
-                      style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-                    ),
-                    Text(
-                      'Johan',
-                      style: primaryTextStyle,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       );
     }

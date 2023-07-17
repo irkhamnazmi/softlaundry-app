@@ -1,11 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:softlaundryapp/models/member_model.dart';
 import 'package:softlaundryapp/theme.dart';
+import 'package:softlaundryapp/widgets/snackbar_alert.dart';
 
-class MemberEditPage extends StatelessWidget {
-  const MemberEditPage({super.key});
+import '../providers/member_providers.dart';
+
+class MemberEditPage extends StatefulWidget {
+  final MemberModel member;
+  const MemberEditPage(this.member, {super.key});
+
+  @override
+  State<MemberEditPage> createState() => _MemberEditPageState();
+}
+
+class _MemberEditPageState extends State<MemberEditPage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  bool? isLoading;
+  MemberProvider? memberProvider;
+  SnackBarAlert? snackBarAlert;
+
+  @override
+  void initState() {
+    getInit();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    phoneNumberController.dispose();
+
+    super.dispose();
+  }
+
+  getInit() async {
+    memberProvider = Provider.of<MemberProvider>(context, listen: false);
+    nameController.text = widget.member.name.toString();
+    addressController.text = widget.member.address.toString();
+    phoneNumberController.text = widget.member.phoneNumber.toString();
+    snackBarAlert = SnackBarAlert();
+  }
 
   @override
   Widget build(BuildContext context) {
+    handleEdit() async {
+      var name = nameController.text;
+      var address = addressController.text;
+      var phoneNumber = phoneNumberController.text;
+
+      if (await memberProvider!.edit(
+              memberId: widget.member.memberId,
+              name: name,
+              address: address,
+              phoneNumber: phoneNumber) ==
+          true) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/member');
+        snackBarAlert!
+            .alertMessage(context, 'Sukses Edit Member', primaryColor);
+      } else {
+        setState(() {
+          snackBarAlert!
+              .alertMessage(context, 'Gagal Edit Member', dangerColor);
+        });
+      }
+    }
+
+    handleDelete() async {
+      if (await memberProvider!.delete(widget.member.id)) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/member');
+        snackBarAlert!
+            .alertMessage(context, 'Sukses Hapus Member', primaryColor);
+      } else {
+        setState(() {
+          snackBarAlert!
+              .alertMessage(context, 'Gagal Hapus Member', dangerColor);
+        });
+      }
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -19,7 +97,7 @@ class MemberEditPage extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, '/member');
                 },
                 child: Image.asset(
                   'assets/left.png',
@@ -31,9 +109,12 @@ class MemberEditPage extends StatelessWidget {
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
-              Image.asset(
-                'assets/trash.png',
-                height: 24,
+              InkWell(
+                onTap: handleDelete,
+                child: Image.asset(
+                  'assets/trash.png',
+                  height: 24,
+                ),
               )
             ],
           ),
@@ -48,14 +129,14 @@ class MemberEditPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ID',
+              'ID Member',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
               height: 8,
             ),
             Text(
-              '1',
+              widget.member.memberId.toString(),
               style: primaryTextButtonStyle.copyWith(fontWeight: semiBold),
             ),
           ],
@@ -84,9 +165,10 @@ class MemberEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: nameController,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry name',
+                    hintText: 'Masukkan Nama Member',
                     hintStyle: secondaryTextStyle),
               ),
             )
@@ -118,11 +200,11 @@ class MemberEditPage extends StatelessWidget {
               child: TextFormField(
                 minLines: 4,
                 maxLines: null,
+                controller: addressController,
                 keyboardType: TextInputType.multiline,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry alamat',
-                    hintStyle: secondaryTextStyle),
+                    hintText: 'Masukkan alamat', hintStyle: secondaryTextStyle),
               ),
             )
           ],
@@ -153,8 +235,10 @@ class MemberEditPage extends StatelessWidget {
               child: TextFormField(
                 keyboardType: TextInputType.phone,
                 style: secondaryTextStyle,
+                controller: phoneNumberController,
                 decoration: InputDecoration.collapsed(
-                    hintText: '085773882', hintStyle: secondaryTextStyle),
+                    hintText: 'Masukkan nomor hp',
+                    hintStyle: secondaryTextStyle),
               ),
             )
           ],
@@ -178,22 +262,22 @@ class MemberEditPage extends StatelessWidget {
     }
 
     Widget buttonEdit() {
+      var textButton = TextButton(
+          onPressed: handleEdit,
+          style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: primaryColor,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
+          child: Text(
+            'Ubah Data',
+            style: whiteTextStyle.copyWith(fontWeight: semiBold),
+          ));
       return Container(
         width: double.infinity,
         margin: EdgeInsets.only(top: defaultMargin),
-        child: TextButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-                elevation: 0,
-                backgroundColor: primaryColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10))),
-            child: Text(
-              'Cetak Kode',
-              style: whiteTextStyle.copyWith(fontWeight: semiBold),
-            )),
+        child: textButton,
       );
     }
 

@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:softlaundryapp/models/member_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:softlaundryapp/shared_prefs.dart';
 
+import '../models/layanan_model.dart';
+import '../shared_prefs.dart';
 import '../theme.dart';
 
-class MemberService {
+class LayananService {
   // String baseUrl = 'https://api.rankep.com/softlaundry-web/public/api';
 
-  Future<List<MemberModel>> all() async {
-    var url = '$baseUrl/members';
+  Future<List<LayananModel>> all() async {
+    var url = '$baseUrl/services';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -20,19 +20,21 @@ class MemberService {
     var response = await http.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.body)['data']['member'];
-      List<MemberModel> member = [];
+      List data = jsonDecode(response.body)['data']['service'];
+      List<LayananModel> layanan = [];
+
       for (var item in data) {
-        member.add(MemberModel.fromJson(item));
+        layanan.add(LayananModel.fromJson(item));
       }
-      return member;
+      print(data);
+      return layanan;
     } else {
-      throw Exception('Gagal Dapat Member');
+      throw Exception('Gagal Dapat Layanan');
     }
   }
 
-  Future<MemberModel> get(String? memberId) async {
-    var url = '$baseUrl/members/get/$memberId';
+  Future<LayananModel> get({String? id}) async {
+    var url = '$baseUrl/services/get/$id';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -43,29 +45,22 @@ class MemberService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      MemberModel member = MemberModel.fromJson(data['member']);
-      return member;
+      LayananModel layanan = LayananModel.fromJson(data['service']);
+      return layanan;
     } else {
-      throw Exception('Gagal Dapat member');
+      throw Exception('Gagal Dapat layanan');
     }
   }
 
-  Future<MemberModel> add({
-    String? name,
-    String? memberId,
-    String? address,
-    String? phoneNumber,
-  }) async {
-    var url = '$baseUrl/members/add';
+  Future<LayananModel> add({String? name, double? price}) async {
+    var url = '$baseUrl/services/add';
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': sharedPrefs.token
     };
     var body = jsonEncode({
       'name': name,
-      'member_id': memberId,
-      'address': address,
-      'phone_number': phoneNumber,
+      'price': price,
     });
 
     var response = await http.post(
@@ -78,29 +73,23 @@ class MemberService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      MemberModel member = MemberModel.fromJson(data['member']);
-      return member;
+      LayananModel layanan = LayananModel.fromJson(data['service']);
+      return layanan;
     } else {
-      throw Exception('Gagal tambah member');
+      throw Exception('Gagal tambah layanan');
     }
   }
 
-  Future<bool> edit({
-    String? memberId,
-    String? name,
-    String? address,
-    String? phoneNumber,
-  }) async {
-    var url = '$baseUrl/members/edit';
+  Future<bool> edit({int? id, String? name, double? price}) async {
+    var url = '$baseUrl/services/edit';
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': sharedPrefs.token
     };
     var body = jsonEncode({
-      'member_id': memberId,
+      'id': id,
       'name': name,
-      'address': address,
-      'phone_number': phoneNumber,
+      'price': price,
     });
 
     var response = await http.put(
@@ -114,12 +103,12 @@ class MemberService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Gagal edit member');
+      throw Exception('Gagal edit layanan');
     }
   }
 
   Future<bool> delete(int? id) async {
-    var url = '$baseUrl/members/delete/$id';
+    var url = '$baseUrl/services/delete/$id';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -131,7 +120,7 @@ class MemberService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Gagal Dapat member');
+      throw Exception('Gagal Hapus layanan');
     }
   }
 }

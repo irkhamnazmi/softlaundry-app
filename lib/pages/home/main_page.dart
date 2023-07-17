@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:softlaundryapp/pages/home/home_page.dart';
 import 'package:softlaundryapp/pages/home/profil_page.dart';
 import 'package:softlaundryapp/pages/home/scan_page.dart';
+import 'package:softlaundryapp/providers/auth_providers.dart';
 import 'package:softlaundryapp/theme.dart';
+
+import '../../models/kasir_model.dart';
+import '../../models/member_model.dart';
+import '../../models/transaksi_model.dart';
+import '../../providers/member_providers.dart';
+import '../../providers/transaksi_provider.dart';
+import '../../shared_prefs.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -13,8 +23,56 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
+  bool? isCurrent;
+  AuthProvider? authProvider;
+  KasirModel? kasir;
+  MemberProvider? memberProvider;
+  TransaksiProvider? transaksiProvider;
+  List<MemberModel> member = [];
+  List<TransaksiModel> transaksi = [];
+
+  bool? isLoading;
+
+  @override
+  void initState() {
+    isLoading = true;
+    isCurrent = false;
+    super.initState();
+  }
+
+  getInit() async {
+    await memberProvider!.all();
+    await transaksiProvider!.all();
+    await authProvider!.profile();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<bool> _onPop() async {
+    SystemNavigator.pop();
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of<AuthProvider>(context);
+    memberProvider = Provider.of<MemberProvider>(context);
+    transaksiProvider = Provider.of<TransaksiProvider>(context);
+    if (isLoading == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => getInit());
+    }
+
+    if (sharedPrefs.page != 0) {
+      currentIndex = 2;
+      isCurrent = true;
+    }
+
+    kasir = authProvider!.kasir;
+    member = memberProvider!.members;
+    transaksi = transaksiProvider!.transaksis;
+
     Widget bottomNav() {
       return ClipRRect(
           child: BottomAppBar(
@@ -61,20 +119,23 @@ class _MainPageState extends State<MainPage> {
     Widget? body() {
       switch (currentIndex) {
         case 0:
-          return const HomePage();
+          return HomePage(member, transaksi);
         case 1:
-          return const ScanPage();
+          return const ScanPage('');
         case 2:
-          return const ProfilPage();
+          return ProfilPage(isCurrent!, kasir!);
         default:
-          const HomePage();
+          HomePage(member, transaksi);
       }
       return null;
     }
 
-    return Scaffold(
-        backgroundColor: backgroundColor,
-        bottomNavigationBar: bottomNav(),
-        body: body());
+    return WillPopScope(
+      onWillPop: _onPop,
+      child: Scaffold(
+          backgroundColor: backgroundColor,
+          bottomNavigationBar: bottomNav(),
+          body: body()),
+    );
   }
 }

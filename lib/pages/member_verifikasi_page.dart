@@ -1,11 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:softlaundryapp/theme.dart';
+import 'package:softlaundryapp/widgets/snackbar_alert.dart';
 
-class LayananEditPage extends StatelessWidget {
-  const LayananEditPage({super.key});
+import '../providers/member_providers.dart';
+
+class MemberVerifikasiPage extends StatefulWidget {
+  final String? memberId;
+  const MemberVerifikasiPage(this.memberId, {super.key});
+
+  @override
+  State<MemberVerifikasiPage> createState() => _MemberVerifikasiPageState();
+}
+
+class _MemberVerifikasiPageState extends State<MemberVerifikasiPage> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  MemberProvider? memberProvider;
+  SnackBarAlert? snackBarAlert;
+
+  @override
+  void initState() {
+    memberProvider = Provider.of<MemberProvider>(context, listen: false);
+    snackBarAlert = SnackBarAlert();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    addressController.dispose();
+    phoneNumberController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    handleSubmit() async {
+      var name = nameController.text;
+      var address = addressController.text;
+      var phoneNumber = phoneNumberController.text;
+
+      if (await memberProvider!.edit(
+              memberId: widget.memberId,
+              name: name,
+              address: address,
+              phoneNumber: phoneNumber) ==
+          true) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/member');
+        snackBarAlert!.alertMessage(
+            context, 'Sukses verifikasi member baru', primaryColor);
+      } else {
+        setState(() {
+          snackBarAlert!.alertMessage(
+              context, 'Gagal verifikasi member baru', dangerColor);
+        });
+      }
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -27,35 +82,32 @@ class LayananEditPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Edit Layanan',
+                'Verifikasi Member',
                 style: primaryTextStyle.copyWith(
                     fontSize: extralarge, fontWeight: semiBold),
               ),
-              Image.asset(
-                'assets/trash.png',
-                height: 24,
-              )
+              const SizedBox()
             ],
           ),
         )),
       );
     }
 
-    Widget idLayanan() {
+    Widget idMember() {
       return Container(
         margin: EdgeInsets.only(bottom: large),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ID',
+              'ID Member',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
               height: 8,
             ),
             Text(
-              '1',
+              widget.memberId!,
               style: primaryTextButtonStyle.copyWith(fontWeight: semiBold),
             ),
           ],
@@ -84,9 +136,10 @@ class LayananEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: nameController,
                 style: secondaryTextStyle,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Softlaundry name',
+                    hintText: 'Isikan nama di sini',
                     hintStyle: secondaryTextStyle),
               ),
             )
@@ -95,14 +148,14 @@ class LayananEditPage extends StatelessWidget {
       );
     }
 
-    Widget hargaInput() {
+    Widget addressInput() {
       return Container(
         margin: EdgeInsets.only(bottom: large),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Harga',
+              'Alamat',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             const SizedBox(
@@ -116,10 +169,48 @@ class LayananEditPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextFormField(
+                controller: addressController,
+                minLines: 4,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
                 style: secondaryTextStyle,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration.collapsed(
-                    hintText: '0', hintStyle: secondaryTextStyle),
+                    hintText: 'Isikan alamat di sini',
+                    hintStyle: secondaryTextStyle),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget phoneNumberInput() {
+      return Container(
+        margin: EdgeInsets.only(bottom: large),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Nomor Hp',
+              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: large, vertical: 11),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: Border.all(color: tertiaryColor),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextFormField(
+                controller: phoneNumberController,
+                keyboardType: TextInputType.phone,
+                style: secondaryTextStyle,
+                decoration: InputDecoration.collapsed(
+                    hintText: 'Isikan Nomor Hp di sini',
+                    hintStyle: secondaryTextStyle),
               ),
             )
           ],
@@ -130,26 +221,24 @@ class LayananEditPage extends StatelessWidget {
     Widget content() {
       return Container(
         margin: EdgeInsets.only(top: topMargin),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              idLayanan(),
-              nameInput(),
-              hargaInput(),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            idMember(),
+            nameInput(),
+            addressInput(),
+            phoneNumberInput(),
+          ],
         ),
       );
     }
 
-    Widget buttonEdit() {
+    Widget buttonVerfikasi() {
       return Container(
         width: double.infinity,
-        margin: EdgeInsets.only(top: topMargin),
-        child: ElevatedButton(
-            onPressed: () {},
+        margin: EdgeInsets.only(top: defaultMargin),
+        child: TextButton(
+            onPressed: handleSubmit,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,
@@ -158,7 +247,7 @@ class LayananEditPage extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10))),
             child: Text(
-              'Ubah Data',
+              'Verifikasi',
               style: whiteTextStyle.copyWith(fontWeight: semiBold),
             )),
       );
@@ -169,7 +258,7 @@ class LayananEditPage extends StatelessWidget {
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        child: Column(children: [header(), content(), buttonEdit()]),
+        child: Column(children: [header(), content(), buttonVerfikasi()]),
       ),
     );
   }

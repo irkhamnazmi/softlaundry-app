@@ -1,11 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:softlaundryapp/models/transaksi_model.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class TransaksiDetailPage extends StatelessWidget {
-  const TransaksiDetailPage({super.key});
+class TransaksiDetailPage extends StatefulWidget {
+  final bool? isLatest;
+  final TransaksiModel transaksi;
+  const TransaksiDetailPage(this.isLatest, this.transaksi, {super.key});
+
+  @override
+  State<TransaksiDetailPage> createState() => _TransaksiDetailPageState();
+}
+
+class _TransaksiDetailPageState extends State<TransaksiDetailPage> {
+  bool? isLoading;
+
+  @override
+  void initState() {
+    isLoading = true;
+    super.initState();
+  }
+
+  getFinish() async {
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isLatest == true) {
+      if (isLoading == true) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => getFinish());
+      }
+    }
+
+    Widget success() {
+      return Center(
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: defaultMargin),
+          height: 150,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/centang.png',
+                height: 70,
+              ),
+              SizedBox(
+                height: large,
+              ),
+              Text(
+                'Transaksi Berhasil',
+                textAlign: TextAlign.center,
+                style: primaryTextStyle.copyWith(
+                    fontSize: extralarge, fontWeight: semiBold),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     Widget header() {
       return AppBar(
         backgroundColor: backgroundColor,
@@ -50,7 +106,7 @@ class TransaksiDetailPage extends StatelessWidget {
                   fontSize: small, fontWeight: semiBold),
             ),
             Text(
-              'Senin, 1/1/2023 13:00 WIB',
+              '${widget.transaksi.createdAt} WIB',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             SizedBox(
@@ -62,7 +118,7 @@ class TransaksiDetailPage extends StatelessWidget {
                   fontSize: small, fontWeight: semiBold),
             ),
             Text(
-              'SoftLaundry',
+              widget.transaksi.member!.name!,
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             SizedBox(
@@ -73,22 +129,30 @@ class TransaksiDetailPage extends StatelessWidget {
               style: tertiaryTextStyle.copyWith(
                   fontSize: small, fontWeight: semiBold),
             ),
-            Text(
-              'Cuci Kiloan',
-              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-            ),
-            SizedBox(
-              height: small,
-            ),
-            Text(
-              'Jumlah',
-              style: tertiaryTextStyle.copyWith(
-                  fontSize: small, fontWeight: semiBold),
-            ),
-            Text(
-              '0',
-              style: secondaryTextStyle.copyWith(fontWeight: semiBold),
-            ),
+            Column(
+                children: widget.transaksi.items!
+                    .map((item) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '- ',
+                                  style: secondaryTextStyle.copyWith(
+                                      fontWeight: semiBold),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    '${item.layanan!.name!} Rp ${item.layanan!.price!.toStringAsFixed(0)} x ${item.weight!.toStringAsFixed(0)} kg = Rp ${item.subPrice!.toStringAsFixed(0)} ',
+                                    style: secondaryTextStyle.copyWith(
+                                        fontWeight: semiBold),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ))
+                    .toList()),
             SizedBox(
               height: small,
             ),
@@ -98,7 +162,7 @@ class TransaksiDetailPage extends StatelessWidget {
                   fontSize: small, fontWeight: semiBold),
             ),
             Text(
-              'Softlaundry kasir',
+              widget.transaksi.kasir!.name!,
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             SizedBox(
@@ -110,7 +174,7 @@ class TransaksiDetailPage extends StatelessWidget {
                   fontSize: small, fontWeight: semiBold),
             ),
             Text(
-              'Rp 0,-',
+              'Rp ${widget.transaksi.totalPrice!.toStringAsFixed(0)},-',
               style: secondaryTextStyle.copyWith(fontWeight: semiBold),
             ),
             SizedBox(
@@ -121,16 +185,20 @@ class TransaksiDetailPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SingleChildScrollView(
+    Widget body() {
+      return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.symmetric(horizontal: defaultMargin),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          header(),
-          content(),
-        ]),
-      ),
-    );
+        child: Column(children: [header(), content()]),
+      );
+    }
+
+    return Scaffold(
+        backgroundColor: backgroundColor,
+        body: widget.isLatest! == true
+            ? isLoading! == true
+                ? success()
+                : body()
+            : body());
   }
 }

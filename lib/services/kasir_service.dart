@@ -1,16 +1,14 @@
 import 'dart:convert';
 
-import 'package:softlaundryapp/models/member_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:softlaundryapp/models/kasir_model.dart';
 import 'package:softlaundryapp/shared_prefs.dart';
 
 import '../theme.dart';
 
-class MemberService {
-  // String baseUrl = 'https://api.rankep.com/softlaundry-web/public/api';
-
-  Future<List<MemberModel>> all() async {
-    var url = '$baseUrl/members';
+class KasirService {
+  Future<List<KasirModel>> all() async {
+    var url = '$baseUrl/cashiers';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -20,19 +18,20 @@ class MemberService {
     var response = await http.get(Uri.parse(url), headers: headers);
 
     if (response.statusCode == 200) {
-      List data = jsonDecode(response.body)['data']['member'];
-      List<MemberModel> member = [];
+      List data = jsonDecode(response.body)['data']['cashier'];
+      List<KasirModel> cashier = [];
+
       for (var item in data) {
-        member.add(MemberModel.fromJson(item));
+        cashier.add(KasirModel.fromJson(item));
       }
-      return member;
+      return cashier;
     } else {
-      throw Exception('Gagal Dapat Member');
+      throw Exception('Gagal Dapat kasier');
     }
   }
 
-  Future<MemberModel> get(String? memberId) async {
-    var url = '$baseUrl/members/get/$memberId';
+  Future<KasirModel> get({String? id}) async {
+    var url = '$baseUrl/cashiers/get/$id';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -43,29 +42,32 @@ class MemberService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      MemberModel member = MemberModel.fromJson(data['member']);
-      return member;
+      KasirModel kasir = KasirModel.fromJson(data['cashier']);
+      return kasir;
     } else {
-      throw Exception('Gagal Dapat member');
+      throw Exception('Gagal Dapat kasir');
     }
   }
 
-  Future<MemberModel> add({
+  Future<KasirModel> add({
     String? name,
-    String? memberId,
     String? address,
+    String? email,
     String? phoneNumber,
+    String? roles,
+    String? password,
   }) async {
-    var url = '$baseUrl/members/add';
+    var url = '$baseUrl/register';
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': sharedPrefs.token
     };
     var body = jsonEncode({
       'name': name,
-      'member_id': memberId,
       'address': address,
+      'email': address,
       'phone_number': phoneNumber,
+      'password': 'softlaundry',
     });
 
     var response = await http.post(
@@ -78,29 +80,35 @@ class MemberService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body)['data'];
-      MemberModel member = MemberModel.fromJson(data['member']);
-      return member;
+      KasirModel kasir = KasirModel.fromJson(data['cashier']);
+      return kasir;
     } else {
-      throw Exception('Gagal tambah member');
+      throw Exception('Gagal tambah kasir');
     }
   }
 
-  Future<bool> edit({
-    String? memberId,
+  Future<KasirModel> edit({
+    int? id,
     String? name,
     String? address,
+    String? email,
     String? phoneNumber,
+    String? roles,
+    String? password,
   }) async {
-    var url = '$baseUrl/members/edit';
+    var url = '$baseUrl/cashiers/edit';
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': sharedPrefs.token
     };
     var body = jsonEncode({
-      'member_id': memberId,
+      'id': id,
       'name': name,
       'address': address,
       'phone_number': phoneNumber,
+      'email': email,
+      'roles': roles,
+      'password': password,
     });
 
     var response = await http.put(
@@ -112,14 +120,16 @@ class MemberService {
     print(response.body);
 
     if (response.statusCode == 200) {
-      return true;
+      var data = jsonDecode(response.body)['data'];
+      KasirModel kasir = KasirModel.fromJson(data['cashier']);
+      return kasir;
     } else {
-      throw Exception('Gagal edit member');
+      throw Exception('Gagal edit kasir');
     }
   }
 
   Future<bool> delete(int? id) async {
-    var url = '$baseUrl/members/delete/$id';
+    var url = '$baseUrl/cashiers/delete/$id';
 
     var headers = {
       'Content-Type': 'application/json',
@@ -131,7 +141,7 @@ class MemberService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Gagal Dapat member');
+      throw Exception('Gagal Dapat kasir');
     }
   }
 }

@@ -1,6 +1,7 @@
-class CashierModel {
+import 'package:intl/intl.dart';
+
+class KasirModel {
   int? id;
-  String? memberId;
   String? name;
   String? address;
   String? phoneNumber;
@@ -9,10 +10,11 @@ class CashierModel {
   String? profilePhotoUrl;
   String? roles;
   String? token;
+  String? createdAt;
+  DateFormat dateFormat = DateFormat('EEEE, dd MMMM yyyy, hh:mm:ss', 'id');
 
-  CashierModel({
+  KasirModel({
     this.id,
-    this.memberId,
     this.name,
     this.address,
     this.phoneNumber,
@@ -21,33 +23,36 @@ class CashierModel {
     this.profilePhotoUrl,
     this.roles,
     this.token,
+    this.createdAt,
   });
 
-  CashierModel.fromJson(Map<String, dynamic> json) {
+  KasirModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    memberId = json['member_id'];
     name = json['name'];
     address = json['address'];
-    phoneNumber = json['phoneNumber'];
+    phoneNumber = json['phone_number'];
     email = json['email'];
     password = json['password'];
     profilePhotoUrl = json['profile_photo_url'];
     roles = json['roles'];
-    token = json['token'];
+    token = json['access_token'];
+    createdAt = dateFormat.format(DateTime.parse(json['created_at']));
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'memberId': memberId,
       'name': name,
       'address': address,
       'phoneNumber': phoneNumber,
       'email': email,
       'password': password,
-      'profilePhotoPath': profilePhotoUrl,
+      'profilePhotoUrl': profilePhotoUrl,
       'roles': roles,
       'token': token,
+      'createdAt': createdAt,
     };
   }
 }
+
+class UninitializedMemberModel extends KasirModel {}

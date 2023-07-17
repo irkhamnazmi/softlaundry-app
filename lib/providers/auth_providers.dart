@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:softlaundryapp/models/cashier_model.dart';
+import 'package:softlaundryapp/models/kasir_model.dart';
 
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  late CashierModel _cashier;
+  late KasirModel _kasir;
 
-  CashierModel get cashier => _cashier;
+  KasirModel get kasir => _kasir;
 
-  set cashier(CashierModel cashier) {
-    _cashier = cashier;
+  set kasir(KasirModel kasir) {
+    _kasir = kasir;
     notifyListeners();
   }
 
@@ -18,31 +18,27 @@ class AuthProvider with ChangeNotifier {
     String? password,
   }) async {
     try {
-      CashierModel cashier = await AuthService().login(
+      KasirModel kasir = await AuthService().login(
         phoneNumber: phoneNumber,
         password: password,
       );
-      _cashier = cashier;
+      _kasir = kasir;
 
       return true;
     } catch (e) {
-      // print(e);
+      print(e);
       return false;
     }
   }
 
-  Future<bool> getCashier({
-    required String token,
-  }) async {
+  Future<bool> profile() async {
     try {
-      CashierModel cashier = await AuthService().getCashier(
-        token: token,
-      );
-      _cashier = cashier;
-
+      KasirModel kasir = await AuthService().profile();
+      _kasir = kasir;
+      // print(kasir.name);
       return true;
     } catch (e) {
-      // print(e);
+      print(e);
       return false;
     }
   }

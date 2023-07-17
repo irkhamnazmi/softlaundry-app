@@ -1,9 +1,14 @@
+import 'package:intl/intl.dart';
+
 class MemberModel {
   int? id;
   String? memberId;
   String? name;
   String? address;
   String? phoneNumber;
+  String? profilePhotoUrl;
+  String? createdAt;
+  DateFormat dateFormat = DateFormat('EEEE, dd MMMM yyyy, hh:mm:ss', 'id');
 
   MemberModel({
     this.id,
@@ -11,6 +16,8 @@ class MemberModel {
     this.name,
     this.address,
     this.phoneNumber,
+    this.profilePhotoUrl,
+    this.createdAt,
   });
 
   MemberModel.fromJson(Map<String, dynamic> json) {
@@ -18,7 +25,9 @@ class MemberModel {
     memberId = json['member_id'];
     name = json['name'];
     address = json['address'];
-    phoneNumber = json['phoneNumber'];
+    phoneNumber = json['phone_number'];
+    profilePhotoUrl = json['profile_photo_url'];
+    createdAt = dateFormat.format(DateTime.parse(json['created_at']));
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +37,10 @@ class MemberModel {
       'name': name,
       'address': address,
       'phoneNumber': phoneNumber,
+      'profilePhotoUrl': profilePhotoUrl,
+      'createdAt': createdAt,
     };
   }
 }
+
+class UninitializedMemberModel extends MemberModel {}

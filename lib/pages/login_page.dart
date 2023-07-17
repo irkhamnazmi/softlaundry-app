@@ -1,11 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:softlaundryapp/providers/auth_providers.dart';
 import 'package:softlaundryapp/theme.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController phoneNumberController = TextEditingController(text: '');
+
+  TextEditingController passwordController = TextEditingController(text: '');
+  String? phoneNum, pass;
+
+  Future<bool> _onPop() async {
+    SystemNavigator.pop();
+    return true;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleLogin() async {
+      phoneNum = phoneNumberController.text;
+      pass = passwordController.text;
+
+      if (await authProvider.login(phoneNumber: phoneNum, password: pass)) {
+        if (!mounted) return;
+        Navigator.popAndPushNamed(context, '/home');
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: dangerColor,
+            content: const Text(
+              'Gagal Login!',
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+      }
+    }
+
     Widget header() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -17,7 +58,7 @@ class LoginPage extends StatelessWidget {
           ),
           const SizedBox(),
           Text(
-            'Masuk ke Soft Laundry',
+            'Masuk ke SoftLaundry',
             style: secondaryTextStyle.copyWith(
                 fontSize: extraSmall, fontWeight: regular),
           ),
@@ -46,6 +87,7 @@ class LoginPage extends StatelessWidget {
             child: TextFormField(
               style: secondaryTextStyle,
               keyboardType: TextInputType.phone,
+              controller: phoneNumberController,
               decoration: InputDecoration.collapsed(
                   hintText: 'ketik email Anda di sini',
                   hintStyle: tertiaryTextStyle),
@@ -76,6 +118,7 @@ class LoginPage extends StatelessWidget {
             child: TextFormField(
               style: secondaryTextStyle,
               obscureText: true,
+              controller: passwordController,
               decoration: InputDecoration.collapsed(
                   hintText: 'ketik password Anda di sini',
                   hintStyle: tertiaryTextStyle),
@@ -90,9 +133,7 @@ class LoginPage extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.only(top: defaultMargin),
         child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/home');
-            },
+            onPressed: handleLogin,
             style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: primaryColor,
@@ -126,32 +167,35 @@ class LoginPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.symmetric(
-              horizontal: defaultMargin, vertical: topMargin),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              header(),
-              const SizedBox(
-                height: 84,
-              ),
-              phoneNumber(),
-              const SizedBox(
-                height: 16,
-              ),
-              passwordInput(),
-              const SizedBox(
-                height: 16,
-              ),
-              buttonLogin(),
-              const Spacer(),
-              footer()
-            ],
+    return WillPopScope(
+      onWillPop: _onPop,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: backgroundColor,
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.symmetric(
+                horizontal: defaultMargin, vertical: topMargin),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header(),
+                const SizedBox(
+                  height: 84,
+                ),
+                phoneNumber(),
+                const SizedBox(
+                  height: 16,
+                ),
+                passwordInput(),
+                const SizedBox(
+                  height: 16,
+                ),
+                buttonLogin(),
+                const Spacer(),
+                footer()
+              ],
+            ),
           ),
         ),
       ),
